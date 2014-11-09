@@ -42,10 +42,8 @@ class Entity:
             self.vx = 0
         if(self.y + self.vy + self.hitbox.get_height() < self.arcade.GAME_HEIGHT and self.vy > 0 or self.y + self.vy > 0 and self.vy <= 0):
             self.y = int(self.y + self.vy)
-            print(self.vy)
             if(not self.supported and abs(self.vy) < 0.05):
                 self.flying = True
-                print("dropped")
                 self.vy = 0.5
             if(self.vy > 0):
                 self.vy = (self.vy * 1.005)
@@ -103,3 +101,7 @@ class Entity:
 class Player(Entity):
     def __init__(self, arcade):
         Entity.__init__(self, arcade)
+    def logic(self):
+        Entity.logic(self)
+        self.arcade.cameraX = self.x
+        self.arcade.cameraY = self.y

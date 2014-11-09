@@ -2,6 +2,8 @@ import random
 
 MAP_WIDTH = 10
 MAP_HEIGHT = 10
+
+SEGMENT_SIZE = 500 #in pixels
 class Map:
     def __init__(self, arcade):
         self.arcade = arcade
@@ -12,16 +14,38 @@ class Map:
             self.mapArray.append([])
             for x in range(0, MAP_WIDTH):
                 self.mapArray[y].append(MapSegment(self.arcade))
+                self.mapArray[y][x].x = x
+                self.mapArray[y][x].y = y
 
         self.mapArray[0][0].addObject(MapObject(self.arcade))
         width = 30
         height = 10
-        for i in range(0, 10):
-            currentObject = SolidObject(self.arcade)
-            currentObject.x = random.randint(0, self.arcade.GAME_WIDTH - width)
-            currentObject.y = random.randint(0, self.arcade.GAME_HEIGHT - height)
-            self.mapArray[0][0].addObject(currentObject)
+        for segIndex in range(0,4):
+            blockColor = ((20*segIndex*4)%255, 100, 100)
+            for i in range(0, 10):
+                currentObject = SolidObject(self.arcade)
+                currentObject.x = random.randint(0, self.arcade.GAME_WIDTH - width)
+                currentObject.y = random.randint(0, self.arcade.GAME_HEIGHT - height)
+                currentObject.color = blockColor
+                self.mapArray[0][segIndex].addObject(currentObject)
     def draw(self):
+        player = self.arcade.player
+
+        xSegment = int(player.x / SEGMENT_SIZE)
+        ySegment = int(player.y / SEGMENT_SIZE)
+
+        screenWidth = self.arcade.GAME_WIDTH
+        screenHeight = self.arcade.GAME_HEIGHT
+
+        visibleSegments = []
+        for y in range(-1, 2):
+            for x in range(-1, 2):
+                if x + xSegment > 0 and x + xSegment <= len(self.mapArray[y]):
+                    if y+ySegment > 0 and y + ySegment <= len(self.mapArray):
+                        currentSegment = self.mapArray[y+ySegment][x+xSegment]
+                        visibleSegments.append(currentSegment)
+        print(str(xSegment) + ":" + str(ySegment) + " and visible segments are " + str(visibleSegments))
+
         y = 0
         x = 0
         self.mapArray[y][x].draw()
@@ -48,6 +72,10 @@ class MapSegment:
         self.arcade = arcade
         self.entities = []
         self.objectContainer = []
+        self.x = 0
+        self.y = 0
+    def __repr__(self):
+        return "MS: " + str(self.x) + ":" + str(self.y)
     def draw(self):
         for object in self.objectContainer:
             object.draw()

@@ -34,7 +34,10 @@ class Arcade:
         self.logicFrame = 0
         self.mouseX = 0
         self.mouseY = 0
+        self.cameraX = int(self.GAME_WIDTH / 2)
+        self.cameraY = int(self.GAME_HEIGHT / 2)
         self.running = True
+        self.debug = True
         self.map = Map(self)
         self.heldKeys = dict()
         self.checkedKeys = dict()
@@ -104,17 +107,18 @@ class Arcade:
             self.root.fill(background, (pos[0], pos[1], textSurface.get_width(), textSurface.get_height()))
         self.root.blit(textSurface, (pos[0], pos[1], textSurface.get_width(), textSurface.get_height()))
     def drawUI(self):
-        self.drawText("Frame: " + str(self.frame), (0, 0))
-        self.drawText("Logic frame: " + str(self.logicFrame), (0, 15))
-        self.drawText("P: " + str(self.player.x) + "-" + str(self.player.y) + ", S:" + str(round(self.player.vx, 2)) + "&" + str(round(self.player.vy)), (self.GAME_WIDTH, 15))
-        self.drawText("J: " + str(["Idle","Jump","DoubleJumped"][self.player.jumpState]), (self.GAME_WIDTH, 30))
-        self.drawText("F: " + str(self.player.flying), (self.GAME_WIDTH, 45))
-        self.drawText("S: " + str(self.player.supported), (self.GAME_WIDTH, 60))
-        self.drawText(self.heldKeys, (self.GAME_WIDTH, 0))
+        if(self.debug):
+            self.drawText("Frame: " + str(self.frame), (0, 0))
+            self.drawText("Logic frame: " + str(self.logicFrame), (0, 15))
+            self.drawText("Camera: " + str(self.cameraX) + "-" + str(self.cameraY), (0, 30))
+            self.drawText("P: " + str(self.player.x) + "-" + str(self.player.y) + ", S:" + str(round(self.player.vx, 2)) + "&" + str(round(self.player.vy)), (self.GAME_WIDTH, 15))
+            self.drawText("J: " + str(["Idle","Jump","DoubleJumped"][self.player.jumpState]), (self.GAME_WIDTH, 30))
+            self.drawText("F: " + str(self.player.flying), (self.GAME_WIDTH, 45))
+            self.drawText("S: " + str(self.player.supported), (self.GAME_WIDTH, 60))
+            self.drawText("X:"+str(self.mouseX)+" Y:"+str(self.mouseY), (self.mouseX + 10, self.mouseY + 10))
+            self.drawText(self.heldKeys, (self.GAME_WIDTH, 0))
     def handleMouseMove(self):
-        mouseX = self.mouseX
-        mouseY = self.mouseY
-        self.drawText("X:"+str(mouseX)+" Y:"+str(mouseY), (self.mouseX + 10, self.mouseY + 10))
+        pass
     def handleMouseClick(self, event):
         pass 
     def handleMouseRelease(self, event):
@@ -136,6 +140,8 @@ class Arcade:
             del self.heldKeys[event.key]
         if event.key == K_ESCAPE:
             self.running = False
+        elif event.key == K_d:
+            self.debug = not self.debug
         currentKey = self.checkedKeys.get(event.key)
         if currentKey:
             currentKey.release()
