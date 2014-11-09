@@ -25,6 +25,10 @@ LOGIC_PER_SEC = 2*FRAMES_PER_SEC
 
 class Arcade:
     def __init__(self):
+        #GLOBAL CONSTS
+        self.GAME_WIDTH = 600
+        self.GAME_HEIGHT = 500
+
         self.clock = pygame.time.Clock()
         self.frame = 0
         self.logicFrame = 0
@@ -34,10 +38,6 @@ class Arcade:
         self.map = Map(self)
         self.heldKeys = dict()
         self.checkedKeys = dict()
-
-        #GLOBAL CONSTS
-        self.GAME_WIDTH = 600
-        self.GAME_HEIGHT = 500
 
         self.root = pygame.display.set_mode((self.GAME_WIDTH, self.GAME_HEIGHT), pygame.DOUBLEBUF)
         self.player = Player(self)
@@ -60,7 +60,7 @@ class Arcade:
         spaceKey.action = spaceAction
         self.checkedKeys.update({K_SPACE:spaceKey})
     def displayLoop(self):
-        self.root.fill((100,0,0))
+        self.root.fill((100,100,100))
         self.clock.tick(LOGIC_PER_SEC)
         self.logicFrame += 1
         if(self.logicFrame % 2 is 0):
@@ -108,6 +108,8 @@ class Arcade:
         self.drawText("Logic frame: " + str(self.logicFrame), (0, 15))
         self.drawText("P: " + str(self.player.x) + "-" + str(self.player.y) + ", S:" + str(round(self.player.vx, 2)) + "&" + str(round(self.player.vy)), (self.GAME_WIDTH, 15))
         self.drawText("J: " + str(["Idle","Jump","DoubleJumped"][self.player.jumpState]), (self.GAME_WIDTH, 30))
+        self.drawText("F: " + str(self.player.flying), (self.GAME_WIDTH, 45))
+        self.drawText("S: " + str(self.player.supported), (self.GAME_WIDTH, 60))
         self.drawText(self.heldKeys, (self.GAME_WIDTH, 0))
     def handleMouseMove(self):
         mouseX = self.mouseX
